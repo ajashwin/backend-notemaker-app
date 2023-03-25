@@ -1,53 +1,48 @@
-const router=require('express').Router();
-const USer=require('../model/User');
-const jwt = require('jsonwebtoken');
-const {body , validationResult} = require('express-validator');
-const bcrypt = require('bcrypt');
+const express = require("express")
+const router = express.Router()
+const userModel = require("../models/userSchema")
+const bcrypt = require("bcrypt")
 
-router.post("/register",body('email').isEmail(), async(req,res)=>{
+
+
+router.use(express.json())
+router.use(express.urlencoded())
+
+
+router.post("/register", async(req, res)=>{
     try{
-        let {email,password,confirmPassword} = req.body;
-        if(password!==confirmPassword){
-            return res.status(403).json({
-                status:"Failed"
-                ,message:"Password not matched"
+        const {email, password} = req.body
+        console.log(req.body)
+        const isData = await userModel.findOne({email:email})
+        
+        if(isData!=null){
+            return res.status(409).json({
+                message:"User already exist"
             })
         }
-
-        let isUser= await USer.findOne({email:email});
-        if(isUser){
-            return res.status(403).send("USer Already exists")
-        }else{
-            const errors=validationResult(req);
-            if(!errors.isEmpty()){
-                return res.status(400).json({
-                    "error":errors.array()
-                })
-            }else{
-                bcrypt.hash(password,10,async function(err,hash){
-                    if(err){
-                        return res.status(400).json({
-                            "Error":err.message
-                        })
-                    }else{
-                        const user=new USer({
-                            email:email,
-                            password:hash,
-                        });
-                        user.save().then(()=>{
-                            return res.status(200).json({
-                                "user":user
-                            })
-                        })
-                    }
+        bcrypt.hash(password, 10, (err, encr)=>{
+            if(err){
+                return res.status(500).json({
+                    message:"Internal issue"
                 })
             }
-        }
-    }catch(e){
-        return res.status(400).json({
-            "Message":e.message
-        });
+           const data = userModel.create({
+            email:email,
+            password:encr
+           })
+           res.status(201).json({
+            message:"register Successfully"
+           })
+        })
     }
+    catch(e){
+        res.status(500).json({
+            message:"Internal issue"
+        })
+    }
+   
+
+    
 })
-  
-module.exports=router;
+
+module.exports = router
