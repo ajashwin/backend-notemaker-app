@@ -1,2 +1,2 @@
 # backend-notetaker-app
-Backend for Notetaker application
+Backend for Notemaker application
