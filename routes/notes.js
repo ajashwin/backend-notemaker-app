@@ -1,5 +1,5 @@
 const express = require("express")
-const postModels = require("../models/notesmodel")
+const postModels = require("../models/notemodel")
 const router = express.Router()
 
 router.use(express.json())
