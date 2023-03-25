@@ -1,6 +1,6 @@
 const router=require('express').Router();
 const express = require("express");
-const Notes = require("../model/note");
+const Notes = require("../../model/note");
 const bodyParser = require("body-parser");
 
 router.use(bodyParser.json())
