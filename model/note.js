@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const{model,Schema} = mongoose;
 const ObjectId= require('mongoose').ObjectId;
 
 const notesmodel=new mongoose.Schema({
